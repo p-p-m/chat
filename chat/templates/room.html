@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script src="http://code.jquery.com/jquery-1.9.0.min.js" type="text/javascript"></script>
+
+    <script>
+
+    window.onbeforeunload = function() {
+        $.ajax({
+            async: false,
+            url: "/delete/{{ room_name }}"
+        });
+    };
+
+    function send() {
+        var ws = new WebSocket("ws://localhost:8000/websocket/{{ room_name }}/");
+
+        ws.onopen = function() {
+            var ta = document.getElementById('message_textarea');
+            var json = {'username':'{{ username }}', 'text':ta.value};
+            ws.send(JSON.stringify(json));
+            ta.value = '';
+        };
+
+        ws.onmessage = function (evt) {
+            var div = document.getElementById('messageid');
+            div.innerHTML = evt.data + '<br>' + div.innerHTML;
+        };
+    }
+
+    </script>
+    {{ username }} | <a href='/login/{{ room_name }}/'> Change nickname </a> 
+    <hr>
+    <div class="chat" align='center'>
+        <div align='left' id='messageid' class="message" 
+            style="height:350px; width: 600px; overflow-y:scroll;">
+            {% for message in messages reversed %}
+                <b>{{ message.username }}</b>:{{ message.text }}<br>
+            {% endfor %}
+        </div>
+        <form class="message_form">
+            <div class="compose">
+                <textarea rows="4" cols="60" id="message_textarea"></textarea>
+            </div>
+            <div class="send">
+                <button class="btn" type="button" onclick="send();">Отправить</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
