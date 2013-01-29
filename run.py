@@ -14,6 +14,7 @@ import tornado.wsgi
 
 from app.tornadosocket import EchoWebSocket
 
+
 define('port', type=int, default=8000)
 
 
@@ -35,7 +36,7 @@ def run():
       django.core.handlers.wsgi.WSGIHandler())
     tornado_app = tornado.web.Application(
       [
-        (r'/static/(.*)', NoCacheStaticHandler, {'path': 'chat/static'}),
+        # (r'/static/(.*)', NoCacheStaticHandler, {'path': 'chat/static'}),
         (r'/websocket/(.+)/', EchoWebSocket),
         (r'.*', tornado.web.FallbackHandler, dict(fallback=wsgi_app)),
       ])

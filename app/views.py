@@ -49,7 +49,8 @@ def login(request, room_name):
             request.session[username_key] = new_username
             return HttpResponseRedirect('/rooms/' + room_name)
 
-    return render_to_response('login.html', {'error': error, 'room_usernames': room_usernames},
+    return render_to_response('login.html', {'error': error,
+                            'room_usernames': ', '.join(room_usernames)},
                             context_instance=RequestContext(request))
 
 

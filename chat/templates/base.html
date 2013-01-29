@@ -6,6 +6,7 @@
 <title>{% block title %}Чат{% endblock title %}</title>
 </head>
 <body>
-{% block content %}{% endblock content %}
+    {% include 'menu.html' %}
+    {% block content %}{% endblock content %}
 </body>
 </html>

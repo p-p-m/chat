@@ -13,13 +13,17 @@
     };
 
     function send() {
-        var ws = new WebSocket("ws://localhost:8000/websocket/{{ room_name }}/");
+        var ws = new WebSocket("ws://127.0.0.1:8000/websocket/{{ room_name }}/");
 
         ws.onopen = function() {
             var ta = document.getElementById('message_textarea');
-            var json = {'username':'{{ username }}', 'text':ta.value};
-            ws.send(JSON.stringify(json));
-            ta.value = '';
+            if (ta.value == '') {
+                alert('You can`t send empty message')
+            } else {
+                var json = {'username':'{{ username }}', 'text':ta.value};
+                ws.send(JSON.stringify(json));
+                ta.value = '';
+            }
         };
 
         ws.onmessage = function (evt) {
