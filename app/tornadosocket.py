@@ -22,6 +22,10 @@ def checked_message(message):
     return message
 
 
+def htmlmessage(sqlmessage):
+    return '<b>{0}</b>:{1}'.format(sqlmessage.username, sqlmessage.text)
+
+
 class EchoWebSocket(tornado.websocket.WebSocketHandler):
     '''
     Received messages from page, takes username form session, writes messages to db and
@@ -48,5 +52,26 @@ class EchoWebSocket(tornado.websocket.WebSocketHandler):
         text = checked_message(parsed['text'])
         sqlmessage = models.Message(room=self.room, username=self.username, text=text)
         sqlmessage.save()
-        strmessage = '<b>{0}</b>:{1}'.format(sqlmessage.username, sqlmessage.text)
-        self.write_message(strmessage)
+        self.write_message(htmlmessage(sqlmessage))
+
+
+class UpdateWebSocket(tornado.websocket.WebSocketHandler):
+    '''
+    Received messages from page, takes username form session, writes messages to db and
+    returns them in html format to page
+    '''
+
+    def open(self, room_name):
+        try:
+            self.room = models.Room.objects.filter(name=room_name).get()
+        except models.Room.DoesNotExist:
+            self.close()
+
+    def on_message(self, message):
+        parsed = tornado.escape.json_decode(message)
+        messages_count = parsed['messages_count']
+        sqlmessages = models.Message.objects.filter(room=self.room).all()
+        htmlmessages = [htmlmessage(message) for message in sqlmessages[messages_count:]]
+
+        json = tornado.escape.json_encode({'new_messages': htmlmessages})
+        self.write_message(json)

@@ -12,7 +12,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.wsgi
 
-from app.tornadosocket import EchoWebSocket
+from app.tornadosocket import EchoWebSocket, UpdateWebSocket
 
 
 define('port', type=int, default=8000)
@@ -38,6 +38,7 @@ def run():
       [
         # (r'/static/(.*)', NoCacheStaticHandler, {'path': 'chat/static'}),
         (r'/websocket/(.+)/', EchoWebSocket),
+        (r'/update/(.+)/', UpdateWebSocket),
         (r'.*', tornado.web.FallbackHandler, dict(fallback=wsgi_app)),
       ])
     server = tornado.httpserver.HTTPServer(tornado_app)

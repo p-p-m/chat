@@ -5,6 +5,12 @@
 
     <script>
 
+    $(document).ready(function() {
+        update();
+    });
+
+    var messages_count =  {{ messages|length }}
+
     window.onbeforeunload = function() {
         $.ajax({
             async: false,
@@ -26,13 +32,37 @@
             }
         };
 
-        ws.onmessage = function (evt) {
-            var div = document.getElementById('messageid');
-            div.innerHTML = evt.data + '<br>' + div.innerHTML;
-        };
+        ws.onmessage = function(evt) {
+            add_message(evt.data);
+        }
     }
 
+    function update() {
+        var ws = new WebSocket("ws://127.0.0.1:8000/update/{{ room_name }}/");
+        
+        ws.onopen = function() {
+            var json = {'messages_count' : messages_count};
+            ws.send(JSON.stringify(json));
+        }
+
+        ws.onmessage = function(evt) {
+            var json = JSON.parse(evt.data);
+            for (var i = 0; i < json.new_messages.length; i++) {
+                add_message(json.new_messages[i]);
+            }
+        }
+
+        setTimeout(update, 500);
+    }
+
+    function add_message(data) { 
+        var div = document.getElementById('messageid');
+        div.innerHTML = data + '<br>' + div.innerHTML;
+        messages_count = messages_count + 1;
+    };
+
     </script>
+    {{ messages|length }}
     {{ username }} | <a href='/login/{{ room_name }}/'> Change nickname </a> 
     <hr>
     <div class="chat" align='center'>
