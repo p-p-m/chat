@@ -23,6 +23,10 @@ def checked_message(message):
 
 
 class EchoWebSocket(tornado.websocket.WebSocketHandler):
+    '''
+    Received messages from page, takes username form session, writes messages to db and
+    returns them in html format to page
+    '''
 
     def open(self, room_name):
         try:
