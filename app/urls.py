@@ -10,5 +10,5 @@ urlpatterns = patterns('app.views',
     url(r'^$', 'main'),
     url(r'^rooms/(.+)/', 'room'),
     url(r'^login/(.+)/', 'login'),
-    url(r'^delete/(.+)/', 'delete_user'),
+    url(r'^delete/(.+)/(.+)', 'delete_user'),
 )

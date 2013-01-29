@@ -14,7 +14,7 @@
     window.onbeforeunload = function() {
         $.ajax({
             async: false,
-            url: "/delete/{{ room_name }}"
+            url: "/delete/{{ room_name }}/{{ username }}"
         });
     };
 
